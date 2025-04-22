@@ -1,11 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://mbiqq4iuuivj"]
+[gd_scene load_steps=19 format=3 uid="uid://mbiqq4iuuivj"]
 
+[ext_resource type="Script" uid="uid://cc3dbno27qvih" path="res://script/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="PackedScene" uid="uid://c3bowh3fbs5ue" path="res://scenes/player.tscn" id="1_ly7v2"]
 [ext_resource type="Texture2D" uid="uid://snd2m6sxqw1a" path="res://assets/sprites/world_tileset.png" id="2_iufqs"]
 [ext_resource type="PackedScene" uid="uid://m4acy4giu641" path="res://scenes/platform.tscn" id="3_8r442"]
 [ext_resource type="PackedScene" uid="uid://dv0n7gghcy8xu" path="res://scenes/coin.tscn" id="4_urp1i"]
 [ext_resource type="PackedScene" uid="uid://ch7srbvxaegqt" path="res://scenes/killzone.tscn" id="5_htea8"]
 [ext_resource type="PackedScene" uid="uid://y244vcu326uv" path="res://scenes/slime.tscn" id="6_ye3bs"]
+[ext_resource type="Script" uid="uid://bm4fe5uo2jd80" path="res://script/slime.gd" id="7_u5sy4"]
+[ext_resource type="FontFile" uid="uid://bbk5in11qf3sl" path="res://assets/fonts/PixelOperator8.ttf" id="8_gee14"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mb4hp"]
 texture = ExtResource("2_iufqs")
@@ -213,7 +216,58 @@ _data = {
 &"move": SubResource("Animation_88p8k")
 }
 
+[sub_resource type="Animation" id="Animation_gee14"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(800, 64)]
+}
+
+[sub_resource type="Animation" id="Animation_u5sy4"]
+resource_name = "move"
+length = 1.5
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(800, 64), Vector2(892, 64)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0tnpc"]
+_data = {
+&"RESET": SubResource("Animation_gee14"),
+&"move": SubResource("Animation_u5sy4")
+}
+
 [node name="Game" type="Node2D"]
+
+[node name="GameManager" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("1_0tnpc")
+
+[node name="ScoreText" type="Label" parent="GameManager"]
+offset_left = 976.0
+offset_top = -32.0
+offset_right = 1139.0
+offset_bottom = -24.0
+theme_override_fonts/font = ExtResource("8_gee14")
+theme_override_font_sizes/font_size = 8
+text = "You have collected x coins"
 
 [node name="TileMap" type="TileMap" parent="."]
 position = Vector2(-1, 0)
@@ -226,7 +280,7 @@ layer_1/tile_data = PackedInt32Array(196609, 0, 0, 196610, 0, 0, 262144, 0, 0, 3
 
 [node name="player" parent="." instance=ExtResource("1_ly7v2")]
 z_index = 5
-position = Vector2(32, 29)
+position = Vector2(32, 36)
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 position = Vector2(0, -8)
@@ -293,7 +347,24 @@ libraries = {
 }
 autoplay = "move"
 
-[node name="AnimatableBody2D" type="AnimatableBody2D" parent="Platforms"]
+[node name="Platform3" parent="Platforms" instance=ExtResource("3_8r442")]
+position = Vector2(800, 64)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform3"]
+libraries = {
+&"": SubResource("AnimationLibrary_0tnpc")
+}
+autoplay = "move"
 
 [node name="slime" parent="." instance=ExtResource("6_ye3bs")]
 position = Vector2(982, 52)
+script = ExtResource("7_u5sy4")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -64.0
+offset_top = 32.0
+offset_right = 8.0
+offset_bottom = 40.0
+theme_override_fonts/font = ExtResource("8_gee14")
+theme_override_font_sizes/font_size = 8
+text = "hey there.."
